@@ -11,6 +11,7 @@ namespace Redact
     {
         private Point _startPoint;
         private Rectangle _startRect;
+
         private readonly SolidBrush _blackoutBrush;
 
         private readonly ToolStripButton[] _optionTSB;
@@ -25,8 +26,8 @@ namespace Redact
             foreach (var tsb in _optionTSB)
                 tsb.Click += tsb_Click;
 
-            this.Resize += new EventHandler(form_Displace);
-            this.Move += new EventHandler(form_Displace);
+            this.Resize += new EventHandler(Form_Displace);
+            this.Move += new EventHandler(Form_Displace);
         }
 
         public void tsb_Click(object sender, EventArgs e)
@@ -47,7 +48,7 @@ namespace Redact
             pbMain.BackColor = Color.FromKnownColor(KnownColor.Control);
         }
 
-        public void form_Displace(object sender, EventArgs e)
+        public void Form_Displace(object sender, EventArgs e)
         {
             pbMain.BackColor = Color.Fuchsia;
             pbMain.Image = null;
@@ -64,18 +65,17 @@ namespace Redact
         private void pbMain_MouseDown(object sender, MouseEventArgs e)
         {
             _startPoint = e.Location;
-            pbMain.Invalidate();
         }
 
         private void pbMain_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button != MouseButtons.Left)
                 return;
+            
+            var endPoint = e.Location;
 
-            var tempPoint = e.Location;
-
-            _startRect.Location = new Point(Math.Min(_startPoint.X, tempPoint.X), Math.Min(_startPoint.Y, tempPoint.Y));
-            _startRect.Size = new Size(Math.Abs(_startPoint.X - tempPoint.X), Math.Abs(_startPoint.Y - tempPoint.Y));
+            _startRect.Location = new Point(Math.Min(_startPoint.X, endPoint.X), Math.Min(_startPoint.Y, endPoint.Y));
+            _startRect.Size = new Size(Math.Abs(_startPoint.X - endPoint.X), Math.Abs(_startPoint.Y - endPoint.Y));
 
             if (tsbPixel.Checked)
                 pbMain.Image = Pixelator.Pixelate(new Bitmap(pbMain.Image), _startRect);
